@@ -28,6 +28,9 @@ void draw() {
 
   for (int i=0; i < balls.length; i++ ) {
     balls[i].draw(i);
+    if (i < balls.length - 1)
+       if (balls[i].isTouching(balls[i+1]))
+          balls[i].state = 1;
     balls[i].process();
   }
 }
