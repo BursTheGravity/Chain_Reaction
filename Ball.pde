@@ -39,9 +39,11 @@ class Ball {
   }
   
   void move() {
-    x = x + dx;
-    y = y + dy;
-    bounce();
+    if (state == 0) {
+      x = x + dx;
+      y = y + dy;
+      bounce();
+    }
   }
   
   void bounce(){
@@ -54,39 +56,31 @@ class Ball {
   }
   
   void draw(int i){
-    if (state == 1 || state == 2)
-      ellipse(x,y,i,i);
-    else if (state == 0)
-      ellipse(x, y, 20, 20);
-
-    if (state != 3)
-      fill(c);
-    else
-      fill(0,0,0);
+    ellipse(x, y, rad, rad);
+    fill(c);
   }
   
   void process(){
-    if (state==0){
-      move();
+    move();
+    if (state==1){ //growing
+      if (rad >= 70) //at this point, start shrinking
+        state = 2;
+      rad += .5;
     }
-    if (state==1){
-      for (int i = 20; i <= 50; i++)
-         draw(i);
-       state = 2;
+    if (state==2){ //shrinking
+      if (rad <= 0) //at this point, dead
+        state = 3;
+      rad -= .5;
     }
-    if (state==2){
-      for (int i = 50; i > 0; i--)
-        draw(i);
-      state = 3;
+    if (state==3) { //dead
+      rad = 0;
     }
-    if (state==3){
-      draw(0);
-    }
-    //if (isTouching()
   }
  
  boolean isTouching( Ball other ) {
-   return ( (rad + other.rad) > (sqrt( sq(x - other.x)+sq(y - other.y) )));
+   boolean touching = ((rad + other.rad/2) > (sqrt( sq(x - other.x)+sq(y - other.y))));
+   boolean otherInfected = (other.state == 1 || other.state == 2);
+   return touching && otherInfected; 
   }
 
 

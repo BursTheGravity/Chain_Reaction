@@ -14,25 +14,28 @@ void setup() {
   balls = new Ball[25];
   for (int i=0; i < balls.length; i++ )
     balls[i] = new Ball();
-  balls[0].state = Ball.DEAD;
+  balls[0].state = Ball.DEAD; 
 }
 
 
 void draw() {
   background(0);
 
-
   for (int i=0; i < balls.length; i++ ) {
     balls[i].move();
+    for (int j=0; j < balls.length; j++ ) { //check if getting infected
+      if (i != j && (balls[i].state == Ball.MOVING)) {
+        if (balls[i].isTouching(balls[j]))
+          balls[i].state = Ball.GROWING;
+      }
+    }
   }
 
   for (int i=0; i < balls.length; i++ ) {
     balls[i].draw(i);
-    if (i < balls.length - 1)
-       if (balls[i].isTouching(balls[i+1]))
-          balls[i].state = 1;
     balls[i].process();
   }
+
 }
 
 
@@ -43,5 +46,5 @@ void mouseClicked() {
     balls[0].rad = 0.1;
     balls[0].state = Ball.GROWING;
     reactionStarted = true;
-    }
+  }
 }
